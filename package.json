@@ -1,0 +1,23 @@
+{
+  "name": "monaco-workspace-editor-react",
+  "version": "0.0.1",
+  "module": "lib/index",
+  "license": "MIT",
+  "scripts": {
+    "build": "yarn tsc -p .",
+    "prepublishOnly": "yarn build"
+  },
+  "devDependencies": {
+    "@types/node": "^13.11.1",
+    "@types/react": "^16.9.34",
+    "monaco-editor": "^0.20.0",
+    "react": "^16.13.1",
+    "react-dom": "^16.13.1",
+    "typescript": "^3.8.3"
+  },
+  "peerDependencies": {
+    "monaco-editor": "*",
+    "react": "*",
+    "react-dom": "*"
+  }
+}
