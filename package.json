@@ -19,5 +19,8 @@
     "monaco-editor": "*",
     "react": "*",
     "react-dom": "*"
-  }
+  },
+  "files": [
+    "lib"
+  ]
 }
