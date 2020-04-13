@@ -10,7 +10,9 @@ yarn add monaco-workspace-editor-react
 import React, { Suspense } from "react";
 import ReactDOM from "react-dom";
 
-const Editor = React.lazy(() => import("../lib/index"));
+const Editor = React.lazy(() =>
+  import("monaco-workspace-editor-react/lib/index")
+);
 
 function App() {
   return (
