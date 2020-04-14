@@ -17,11 +17,6 @@ const Editor = React.lazy(() =>
 function App() {
   return (
     <>
-      <style
-        dangerouslySetInnerHTML={{
-          __html: `html, body, main { margin: 0; padding: 0; width: 100vw; height: 100vh; }`,
-        }}
-      ></style>
       <Suspense fallback="...">
         <Editor
           currentFilepath="/index.tsx"
@@ -41,6 +36,40 @@ const main = document.createElement("main");
 document.body.append(main);
 
 ReactDOM.render(<App />, main);
+```
+
+## Expected Webpack Config
+
+```js
+const WorkerPlugin = require("worker-plugin");
+
+module.exports = {
+  // ...
+  module: {
+    rules: [
+      // ...
+      {
+        test: /\.(jpg|jpeg|png|woff|woff2|eot|ttf|svg)$/,
+        use: [
+          {
+            loader: "url-loader",
+            options: {
+              limit: 8192,
+            },
+          },
+        ],
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
+    ],
+  },
+  plugins: [
+    // ...
+    new WorkerPlugin(),
+  ],
+};
 ```
 
 ## LICENSE

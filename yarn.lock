@@ -4048,6 +4048,26 @@ tty-browserify@0.0.0:
   resolved "https://registry.yarnpkg.com/tty-browserify/-/tty-browserify-0.0.0.tgz#a157ba402da24e9bf957f9aa69d524eed42901a6"
   integrity sha1-oVe6QC2iTpv5V/mqadUk7tQpAaY=
 
+tui-code-snippet@^2.2.0, tui-code-snippet@^2.3.1:
+  version "2.3.2"
+  resolved "https://registry.yarnpkg.com/tui-code-snippet/-/tui-code-snippet-2.3.2.tgz#39eb3ce46ea92043b3244f155797248535880c5d"
+  integrity sha512-6jGbM/m7A2L59lJSripwMVp87awrWgJXezlLV8GuAha3s0k01E4+MndoU5WlXd4dauVRgzHhKguTVslx/jMehw==
+
+tui-context-menu@^2.1.6:
+  version "2.1.6"
+  resolved "https://registry.yarnpkg.com/tui-context-menu/-/tui-context-menu-2.1.6.tgz#368fa95887bcee4300ee0658d301e6d947cdeb5e"
+  integrity sha512-oV89tjVE+BjbTg/YYyPQj3yxgbPPplF46pGSyTFPoCyNUj5JcAckwjc6F4fCutNnk72esBsQKM9dm3oGVxp1fw==
+  dependencies:
+    tui-code-snippet "^2.2.0"
+
+tui-tree@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/tui-tree/-/tui-tree-4.0.0.tgz#de91ec3f8162dc082dde66d70feb87ebea1e7e5f"
+  integrity sha512-75NSU7FlDzJenGpDWS0pzNB6aJUnitPOR4ZtTBacFpeI4wpGFu3O/H20CWqJc2rV6rye2+Ltrp7kqNQZf9bd3w==
+  dependencies:
+    tui-code-snippet "^2.3.1"
+    tui-context-menu "^2.1.6"
+
 type-is@~1.6.17, type-is@~1.6.18:
   version "1.6.18"
   resolved "https://registry.yarnpkg.com/type-is/-/type-is-1.6.18.tgz#4e552cd05df09467dcbc4ef739de89f2cf37c131"
