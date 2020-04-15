@@ -3,15 +3,19 @@
   "version": "0.0.1",
   "license": "MIT",
   "scripts": {
-    "dev": "parcel src/index.html --open",
+    "prepublishOnly": "yarn build",
     "build": "tsc -p .",
-    "test": "jest",
-    "deploy": "netlify deploy -d dist --prod"
+    "dev": "tsc -p . --watch",
+    "demo": "parcel src/index.html --open"
   },
   "dependencies": {
-    "@mizchi/tree-utils": "^0.2.0"
+    "@mizchi/tree-utils": "^0.2.0",
+    "react-dnd": "^10.0.2",
+    "react-dnd-html5-backend": "^10.0.2"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/react-dnd": "^3.0.2"
+  },
   "peerDependencies": {
     "react": "*",
     "react-dnd": "*",

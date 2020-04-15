@@ -1,9 +1,9 @@
-const path = require("path");
 const HTMLPlugin = require("html-webpack-plugin");
+// @ts-ignore
 const WorkerPlugin = require("worker-plugin");
 
 module.exports = {
-  entry: path.join(__dirname, "run.tsx"),
+  // entry: path.join(__dirname, "run.tsx"),
   resolve: {
     extensions: [".tsx", ".ts", ".js", ".css"],
   },

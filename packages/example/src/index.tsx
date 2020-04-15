@@ -6,7 +6,7 @@ import "tui-tree/dist/tui-tree.css";
 
 type Files = { [k: string]: string };
 
-const Editor = React.lazy(() => import("../lib/index"));
+const Editor = React.lazy(() => import("unispace-editor"));
 
 const initialFiles: Files = {
   "/index.tsx": "console.log('xxx')",

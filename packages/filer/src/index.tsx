@@ -13,13 +13,13 @@ type DraggableTreeProps<T> = {
   renderItem: (itemProps: FlatItem) => React.ReactElement<any>;
 };
 
-export const DraggableTree = DragDropContext(ReactDnDHTML5Backend)(function<T>(
+export const DraggableTree = DragDropContext(ReactDnDHTML5Backend)(function <T>(
   props: DraggableTreeProps<T>
 ) {
   const flatItems = toFlatItems(props.tree);
   return (
     <>
-      {flatItems.map(item => {
+      {flatItems.map((item) => {
         return (
           <DraggableItem
             key={item.id}
@@ -62,11 +62,11 @@ const DraggableItem: React.ComponentType<DraggableItemProps> = compose(
             dragSourceProps.onDrop(dragSourceProps.id, dropProps.id);
           }
         }
-      }
+      },
     },
-    connect => {
+    (connect) => {
       return {
-        connectDropTarget: connect.dropTarget()
+        connectDropTarget: connect.dropTarget(),
       };
     }
   ),
@@ -78,12 +78,12 @@ const DraggableItem: React.ComponentType<DraggableItemProps> = compose(
       },
       beginDrag(props) {
         return props;
-      }
+      },
     },
     (connect, monitor) => {
       return {
         connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging()
+        isDragging: monitor.isDragging(),
       };
     }
   )
@@ -107,9 +107,9 @@ function toFlatItems<T>(tree: Node<T>): FlatItem[] {
     items.push({
       id: node.id,
       parentId: parentId,
-      depth
+      depth,
     });
-    node.children.forEach(child => {
+    node.children.forEach((child) => {
       walk(child, node.id, depth + 1);
     });
   }
