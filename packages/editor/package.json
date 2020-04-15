@@ -1,5 +1,5 @@
 {
-  "name": "unispace-ui",
+  "name": "unispace-editor",
   "version": "0.0.2",
   "module": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -20,7 +20,7 @@
     "ts-loader": "^6.2.2",
     "tui-tree": "^4.0.0",
     "typescript": "^3.8.3",
-    "unispace-treeview": "0.0.1",
+    "unispace-filer": "0.0.1",
     "url-loader": "^4.1.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11",

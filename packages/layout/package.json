@@ -1,0 +1,27 @@
+{
+  "name": "unispace-layout",
+  "license": "MIT",
+  "version": "0.1.0",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "dev": "parcel examples/index.html --open --out-dir example-dist",
+    "build": "rimraf dist & rollup -c",
+    "test": "jest",
+    "test:types": "tsc . --noEmit",
+    "build-demo": "parcel build examples/index.html --out-dir example-dist",
+    "deploy-demo": "netlify deploy -d example-dist --prod"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-dom": "*"
+  },
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "react-modal": "^3.11.1"
+  }
+}

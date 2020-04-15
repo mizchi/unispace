@@ -1,0 +1,21 @@
+{
+  "name": "unispace-filer",
+  "version": "0.0.1",
+  "license": "MIT",
+  "scripts": {
+    "dev": "parcel src/index.html --open",
+    "build": "tsc -p .",
+    "test": "jest",
+    "deploy": "netlify deploy -d dist --prod"
+  },
+  "dependencies": {
+    "@mizchi/tree-utils": "^0.2.0"
+  },
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "*",
+    "react-dnd": "*",
+    "react-dnd-html5-backend": "*",
+    "react-dom": "*"
+  }
+}
