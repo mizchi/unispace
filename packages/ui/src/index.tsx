@@ -8,13 +8,14 @@ import { restoreFromJSON, disposeAll, readModel } from "./monacoFs";
 type Props = {
   currentFilepath: string;
   initialFiles: { [k: string]: string };
+  padding?: number;
   onChangeFiles: (files: { [k: string]: string }) => void;
 };
 
 const viewStateCache = new Map();
 
 export default React.memo(
-  ({ initialFiles, currentFilepath, onChangeFiles }: Props) => {
+  ({ initialFiles, currentFilepath, onChangeFiles, padding = 5 }: Props) => {
     // const { files: initialFiles, currentFilepath, onSetFiles } = useAppState();
     useEffect(() => {
       // console.log("remount");
@@ -107,10 +108,10 @@ export default React.memo(
         <div
           style={{
             position: "absolute",
-            top: 5,
-            bottom: 5,
-            left: 5,
-            right: 5,
+            top: padding,
+            bottom: padding,
+            left: padding,
+            right: padding,
           }}
         >
           <div
