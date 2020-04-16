@@ -1,6 +1,6 @@
 import React from "react";
 import { Node } from "@mizchi/tree-utils";
-import { DragDropContext, DragSource, DropTarget } from "react-dnd";
+import { useDrag, useDragLayer, DragSource, DropTarget } from "react-dnd";
 import ReactDnDHTML5Backend from "react-dnd-html5-backend";
 
 const DND_GROUP = "$react-draggalble-tree";
@@ -43,8 +43,15 @@ type DraggableItemProps = {
   onDrop: (sourceId: string, dropId: string) => void;
 };
 
-const DraggableItem: React.ComponentType<DraggableItemProps> = compose(
-  DropTarget<DraggableItemProps>(
+function DraggableItem(props: DraggableItemProps) {
+  const [{ opacity }, dragRef] = useDrag({
+    item: { type: "card", text: "text" },
+    collect: monitor => ({
+      opacity: monitor.isDragging() ? 0.5 : 1,
+    }),
+  })
+
+    DropTarget<DraggableItemProps>(
     DND_GROUP,
     {
       // hover(props, monitor, component: any) {

@@ -6,7 +6,7 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p .",
     "dev": "tsc -p . --watch",
-    "demo": "parcel src/index.html --open"
+    "demo:simple": "webpack-dev-server --config examples/simple/webpack.config.js"
   },
   "dependencies": {
     "@mizchi/tree-utils": "^0.2.0",
@@ -14,7 +14,9 @@
     "react-dnd-html5-backend": "^10.0.2"
   },
   "devDependencies": {
-    "@types/react-dnd": "^3.0.2"
+    "@types/react-dnd": "^3.0.2",
+    "@types/react-dnd-html5-backend": "^3.0.2",
+    "worker-plugin": "^4.0.2"
   },
   "peerDependencies": {
     "react": "*",

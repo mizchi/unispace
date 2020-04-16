@@ -43,7 +43,7 @@ function filesToTreeData(files: Files) {
         return;
       }
       // already exists?
-      const hit = cur.children.find((c) => c.text === dir);
+      const hit = cur.children?.find((c) => c.text === dir);
       if (hit) {
         cur = hit;
         return;
@@ -52,7 +52,7 @@ function filesToTreeData(files: Files) {
         text: dir,
         children: [],
       };
-      cur.children.push(newDir);
+      cur.children?.push(newDir);
       cur = newDir;
     });
   }
