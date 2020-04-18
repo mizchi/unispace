@@ -118,44 +118,24 @@ function DropPane(props: {
 
 function App() {
   const recipes = [
-    {
-      id: "text",
-      initialData: {
-        children: "hello",
-      },
-    },
-    { id: "image", initialData: { src: "...." } },
-    { id: "switcher" },
-    {
-      id: "container",
-      initialData: {
-        style: {
-          paddingLeft: "0px",
-          paddingRight: "0px",
-          paddingTop: "0px",
-          paddingBottom: "0px",
-        },
-      },
-    },
-    { id: "layout" },
-    { id: "element" },
+    { id: "red" },
+    { id: "blue" },
+    { id: "yellow" },
+    { id: "black" },
+    { id: "white" },
   ];
   const [items, setItems] = useState<
-    Array<{
-      id: string;
-      content: null | string;
-      style: { [k: string]: string | number };
-    }>
+    Array<{ id: string; content: null | string }>
   >([
-    { id: "a", content: null, style: { padding: 20 } },
-    { id: "b", content: null, style: { padding: 20 } },
-    { id: "c", content: null, style: { padding: 1 } },
-    { id: "d", content: null, style: { padding: 1 } },
-    { id: "e", content: null, style: { padding: 1 } },
-    { id: "f", content: null, style: { padding: 1 } },
-    { id: "g", content: null, style: { padding: 1 } },
-    { id: "h", content: null, style: { padding: 1 } },
-    { id: "i", content: null, style: { padding: 1 } },
+    { id: "a", content: null },
+    { id: "b", content: null },
+    { id: "c", content: null },
+    { id: "d", content: null },
+    { id: "e", content: null },
+    { id: "f", content: null },
+    { id: "g", content: null },
+    { id: "h", content: null },
+    { id: "i", content: null },
   ]);
   const [selectedId, setSelectedId] = useState<null | string>(null);
 
@@ -184,15 +164,14 @@ function App() {
                     <DraggableObject id={r.id} key={r.id}>
                       <div
                         style={{
+                          backgroundColor: r.id,
                           borderBottom: "1px solid black",
                           display: "flex",
                           height: 64,
                           justifyContent: "center",
                           alignItems: "center",
                         }}
-                      >
-                        {r.id}
-                      </div>
+                      />
                     </DraggableObject>
                   );
                 })}
@@ -213,9 +192,11 @@ function App() {
                         gridArea={item.id}
                         onDrop={(dragItem) => {
                           const newItems = produce(items, (draft) => {
-                            const hit = draft.find((i) => i.id === item.id);
-                            if (hit) {
-                              hit.content = dragItem.id;
+                            const hit = draft.findIndex(
+                              (i) => i.id === item.id
+                            );
+                            if (hit > -1) {
+                              draft[hit].content = dragItem.id;
                             }
                           });
                           setItems(newItems);
@@ -226,23 +207,12 @@ function App() {
                           style={{
                             width: "100%",
                             height: "100%",
-                            boxSizing: "border-box",
-                            backgroundColor: "gray",
-                            ...item.style,
-                            // padding: 40,
+                            backgroundColor: item.content
+                              ? item.content
+                              : "gray",
                           }}
                         >
-                          <div
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              backgroundColor: item.content
-                                ? item.content
-                                : "transparent",
-                            }}
-                          >
-                            {item.id}: {item.content}
-                          </div>
+                          {item.id}: {item.content}
                         </div>
                       </DropPane>
                     );
@@ -254,30 +224,6 @@ function App() {
                   <div>
                     <div>id: {selectedPane.id}</div>
                     <div>content: {selectedPane.content || "null"}</div>
-                    <div>
-                      <div>
-                        padding:
-                        <input
-                          type="number"
-                          value={selectedPane.style.padding}
-                          onChange={(ev) => {
-                            const value = parseInt(ev.target.value, 10);
-                            if (typeof value !== "number" || value === NaN) {
-                              return;
-                            }
-                            const newItems = produce(items, (draft) => {
-                              const target = draft.find(
-                                (i) => i.id === selectedPane.id
-                              );
-                              if (target) {
-                                target.style.padding = value;
-                              }
-                            });
-                            setItems(newItems);
-                          }}
-                        />
-                      </div>
-                    </div>
                   </div>
                 )}
               </div>

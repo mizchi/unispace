@@ -43,84 +43,85 @@ type DraggableItemProps = {
   onDrop: (sourceId: string, dropId: string) => void;
 };
 
-function DraggableItem(props: DraggableItemProps) {
-  const [{ opacity }, dragRef] = useDrag({
-    item: { type: "card", text: "text" },
-    collect: monitor => ({
-      opacity: monitor.isDragging() ? 0.5 : 1,
-    }),
-  })
+// function DraggableItem(props: DraggableItemProps) {
+//   const [{ opacity }, dragRef] = useDrag({
+//     item: { type: "card", text: "text" },
+//     canDrag
+//     collect: monitor => ({
+//       opacity: monitor.isDragging() ? 0.5 : 1,
+//     }),
+//   })
 
-    DropTarget<DraggableItemProps>(
-    DND_GROUP,
-    {
-      // hover(props, monitor, component: any) {
-      // console.log("hover");
-      // },
-      canDrop(props, _monitor) {
-        return props.canDropOnItem != null
-          ? props.canDropOnItem(props.id)
-          : true;
-      },
-      drop(dropProps, monitor, _dropComponent) {
-        if (monitor) {
-          const dragSourceProps: DraggableItemProps = monitor.getItem();
-          if (dropProps.id !== dragSourceProps.id) {
-            dragSourceProps.onDrop(dragSourceProps.id, dropProps.id);
-          }
-        }
-      },
-    },
-    (connect) => {
-      return {
-        connectDropTarget: connect.dropTarget(),
-      };
-    }
-  ),
-  DragSource<DraggableItemProps>(
-    DND_GROUP,
-    {
-      canDrag(props) {
-        return props.canDragItem != null ? props.canDragItem(props.id) : true;
-      },
-      beginDrag(props) {
-        return props;
-      },
-    },
-    (connect, monitor) => {
-      return {
-        connectDragSource: connect.dragSource(),
-        isDragging: monitor.isDragging(),
-      };
-    }
-  )
-)((props: any) => {
-  return props.connectDragSource(props.connectDropTarget(props.children));
-});
+//     DropTarget<DraggableItemProps>(
+//     DND_GROUP,
+//     {
+//       // hover(props, monitor, component: any) {
+//       // console.log("hover");
+//       // },
+//       canDrop(props, _monitor) {
+//         return props.canDropOnItem != null
+//           ? props.canDropOnItem(props.id)
+//           : true;
+//       },
+//       drop(dropProps, monitor, _dropComponent) {
+//         if (monitor) {
+//           const dragSourceProps: DraggableItemProps = monitor.getItem();
+//           if (dropProps.id !== dragSourceProps.id) {
+//             dragSourceProps.onDrop(dragSourceProps.id, dropProps.id);
+//           }
+//         }
+//       },
+//     },
+//     (connect) => {
+//       return {
+//         connectDropTarget: connect.dropTarget(),
+//       };
+//     }
+//   ),
+//   DragSource<DraggableItemProps>(
+//     DND_GROUP,
+//     {
+//       canDrag(props) {
+//         return props.canDragItem != null ? props.canDragItem(props.id) : true;
+//       },
+//       beginDrag(props) {
+//         return props;
+//       },
+//     },
+//     (connect, monitor) => {
+//       return {
+//         connectDragSource: connect.dragSource(),
+//         isDragging: monitor.isDragging(),
+//       };
+//     }
+//   )
+// )((props: any) => {
+//   return props.connectDragSource(props.connectDropTarget(props.children));
+// });
 
-function compose(...funcs: Function[]) {
-  return funcs.reduce((a, b) => (...args: any) => a(b(...args)));
-}
+// function compose(...funcs: Function[]) {
+//   return funcs.reduce((a, b) => (...args: any) => a(b(...args)));
+// }
 
-type FlatItem = {
-  id: string;
-  parentId: string | null;
-  depth: number;
-};
+// type FlatItem = {
+//   id: string;
+//   parentId: string | null;
+//   depth: number;
+// };
 
-function toFlatItems<T>(tree: Node<T>): FlatItem[] {
-  const items: FlatItem[] = [];
-  function walk(node: Node<T>, parentId: string | null, depth: number) {
-    items.push({
-      id: node.id,
-      parentId: parentId,
-      depth,
-    });
-    node.children.forEach((child) => {
-      walk(child, node.id, depth + 1);
-    });
-  }
-  walk(tree, null, 0);
+// function toFlatItems<T>(tree: Node<T>): FlatItem[] {
+//   const items: FlatItem[] = [];
+//   function walk(node: Node<T>, parentId: string | null, depth: number) {
+//     items.push({
+//       id: node.id,
+//       parentId: parentId,
+//       depth,
+//     });
+//     node.children.forEach((child) => {
+//       walk(child, node.id, depth + 1);
+//     });
+//   }
+//   walk(tree, null, 0);
 
-  return items;
-}
+//   return items;
+// }
