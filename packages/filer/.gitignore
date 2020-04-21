@@ -43,3 +43,4 @@ node_modules/
 dist
 .netlify
 node_modules
+/lib

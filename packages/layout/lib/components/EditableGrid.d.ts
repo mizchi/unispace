@@ -1,0 +1,22 @@
+import React from "react";
+import { GridData } from "../types";
+declare type Props = {
+    width: number | string;
+    height: number | string;
+    spacerSize: number;
+    rows: string[];
+    fixedRows?: (string | boolean)[];
+    columns: string[];
+    fixedColumns?: (string | boolean)[];
+    areas: string[][];
+    children: React.ReactNode;
+    showVertical?: boolean;
+    showHorizontal?: boolean;
+    showCrossPoint?: boolean;
+    hideOnResize?: boolean;
+    onChangeGridData?: (data: GridData) => void;
+    onDragStart?: Function;
+    onDragEnd?: Function;
+};
+export declare function EditableGrid({ width, height, spacerSize, rows, columns, fixedRows, fixedColumns, areas, showCrossPoint, showHorizontal, showVertical, hideOnResize, onChangeGridData, onDragStart, onDragEnd, children }: Props): JSX.Element;
+export {};

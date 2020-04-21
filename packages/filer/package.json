@@ -12,11 +12,14 @@
     "@mizchi/tree-utils": "^0.2.0",
     "immer": "^6.0.3",
     "react-dnd": "^10.0.2",
-    "react-dnd-html5-backend": "^10.0.2"
+    "react-dnd-html5-backend": "^10.0.2",
+    "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "@types/lodash-es": "^4.17.3",
     "@types/react-dnd": "^3.0.2",
     "@types/react-dnd-html5-backend": "^3.0.2",
+    "lodash-es": "^4.17.15",
     "worker-plugin": "^4.0.2"
   },
   "peerDependencies": {
