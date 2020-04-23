@@ -20,10 +20,13 @@
     "ulid": "^2.3.0"
   },
   "devDependencies": {
+    "@editorjs/editorjs": "^2.17.0",
     "@types/lodash-es": "^4.17.3",
     "@types/react-dnd": "^3.0.2",
     "@types/react-dnd-html5-backend": "^3.0.2",
+    "@types/react-modal": "^3.10.5",
     "lodash-es": "^4.17.15",
+    "react-modal": "^3.11.2",
     "worker-plugin": "^4.0.2"
   },
   "peerDependencies": {
