@@ -4,54 +4,21 @@ import {
   DropTargetMonitor,
   DragSourceMonitor,
 } from "react-dnd";
-import { ElementData, TreeNode, GridAreaData, GridData } from "./types";
-import { useTreeDispatch } from "./contexts";
-import { swapNodes, moveNode, addChild } from "./reducer";
+import {
+  ElementData,
+  TreeNode,
+  GridAreaData,
+  GridData,
+  DragType,
+  DropType,
+} from "../types";
+import { useTreeDispatch } from "./tree";
+import { swapNodes, moveNode, addChild } from "../reducer";
 import { ulid } from "ulid";
 import { uniqueId } from "lodash-es";
 // import { ElementData, TreeNode } from "./types";
 
 export const DND_CONTEXT = "dnd-context";
-
-export type ElementSource =
-  | {
-      displayName: string;
-      sourceType: "text";
-      value: string;
-    }
-  | {
-      displayName: string;
-
-      sourceType: "image";
-      src: string;
-    }
-  | {
-      displayName: string;
-      sourceType: "grid";
-      rows: string[];
-      columns: string[];
-      areas: string[][];
-    };
-
-type DragType =
-  | {
-      dragType: "source";
-      source: ElementSource;
-    }
-  | {
-      dragType: "element";
-      id: string;
-    };
-
-type DropType =
-  | {
-      dropType: "blank";
-      parentId: string;
-    }
-  | {
-      id: string;
-      dropType: "existed-element";
-    };
 
 type DragSpec<T> = {
   canDrag?: () => boolean;

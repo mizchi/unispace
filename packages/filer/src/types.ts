@@ -42,3 +42,43 @@ export type ElementData =
   | StyleData
   | TextData
   | ImageData;
+
+export type ElementSource =
+  | {
+      displayName: string;
+      sourceType: "text";
+      value: string;
+    }
+  | {
+      displayName: string;
+
+      sourceType: "image";
+      src: string;
+    }
+  | {
+      displayName: string;
+      sourceType: "grid";
+      rows: string[];
+      columns: string[];
+      areas: string[][];
+    };
+
+export type DragType =
+  | {
+      dragType: "source";
+      source: ElementSource;
+    }
+  | {
+      dragType: "element";
+      id: string;
+    };
+
+export type DropType =
+  | {
+      dropType: "blank";
+      parentId: string;
+    }
+  | {
+      id: string;
+      dropType: "existed-element";
+    };

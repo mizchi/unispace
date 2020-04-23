@@ -2,8 +2,8 @@ import { useContext, useReducer, Dispatch } from "react";
 import React from "react";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
-import { ElementData, TreeNode } from "./types";
-import { reducer, TreeState, getInitialState, TreeAction } from "./reducer";
+import { ElementData, TreeNode } from "../types";
+import { reducer, TreeState, getInitialState, TreeAction } from "../reducer";
 
 export const TreeStateContext = React.createContext<TreeState>(null as any);
 export const TreeDispatchContext = React.createContext<Dispatch<TreeAction>>(

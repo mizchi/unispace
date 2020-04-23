@@ -1,45 +1,17 @@
 import React, { useState, useContext, useCallback, useRef } from "react";
 import ReactDOM from "react-dom";
-import { Pane, Flex, Grid, Text } from "./elements";
+import { Pane, Flex, Grid, Text } from "./components/elements";
 import type { Node as TreeNode } from "./tree-api";
-import { ElementData } from "./types";
-import { sampleTree } from "./mock";
+import { ElementData, ElementSource } from "./types";
+import { sampleTree, ELEMENT_SOURCES } from "./mock";
 import flatten from "lodash-es/flatten";
-import { useTreeState, TreeStateProvider, useTreeDispatch } from "./contexts";
+import {
+  useTreeState,
+  TreeStateProvider,
+  useTreeDispatch,
+} from "./contexts/tree";
 import { selectNode } from "./reducer";
-import { useDragOnTree, useDropOnTree, ElementSource } from "./dnd";
-
-const ELEMENT_SOURCES: ElementSource[] = [
-  {
-    displayName: "Text",
-    sourceType: "text",
-    value: "",
-  },
-  {
-    displayName: "Image",
-    sourceType: "image",
-    src:
-      "http://imgcc.naver.jp/kaze/mission/USER/20140612/42/4930882/68/598x375xe4022b20b838933f265c1591.jpg",
-    // src: "",
-  },
-  {
-    displayName: "Grid(1x1)",
-    sourceType: "grid",
-    rows: ["1fr"],
-    columns: ["1fr"],
-    areas: [["1"]],
-  },
-  {
-    displayName: "Grid(2x2)",
-    sourceType: "grid",
-    rows: ["1fr", "1fr"],
-    columns: ["1fr", "1fr"],
-    areas: [
-      ["a", "b"],
-      ["c", "d"],
-    ],
-  },
-];
+import { useDragOnTree, useDropOnTree } from "./contexts/dnd";
 
 function SourceList() {
   return (
