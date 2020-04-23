@@ -1,5 +1,5 @@
 import React from "react";
-import { Pane, Grid, Text } from "./elements";
+import { Pane, Grid, Text, Flex } from "./elements";
 import { Node as TreeNode } from "../tree-api";
 import { ElementData } from "../types";
 import flatten from "lodash-es/flatten";
@@ -17,6 +17,17 @@ export function View(props: { tree: TreeNode<ElementData> }) {
         </Pane>
       );
     }
+
+    case "flex": {
+      return (
+        <Flex flexDirection={data.direction}>
+          {props.tree.children.map((c) => {
+            return <View key={c.id} tree={c} />;
+          })}
+        </Flex>
+      );
+    }
+
     case "grid": {
       const gridAreaNames = flatten(data.areas);
       const { rows, columns, areas } = data;

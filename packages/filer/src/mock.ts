@@ -16,6 +16,16 @@ export const ELEMENT_SOURCES: ElementSource[] = [
     // src: "",
   },
   {
+    displayName: "Row",
+    sourceType: "flex",
+    direction: "row",
+  },
+  {
+    displayName: "Column",
+    sourceType: "flex",
+    direction: "column",
+  },
+  {
     displayName: "Grid(1x1)",
     sourceType: "grid",
     rows: ["1fr"],
@@ -94,7 +104,16 @@ export const sampleTree: TreeNode<ElementData> = {
                     elementType: "grid-area",
                     gridArea: "e",
                   },
-                  children: [],
+                  children: [
+                    {
+                      id: uniqueId(),
+                      data: {
+                        elementType: "flex",
+                        direction: "column",
+                      },
+                      children: [],
+                    },
+                  ],
                 },
                 {
                   id: uniqueId(),
@@ -134,6 +153,36 @@ export const sampleTree: TreeNode<ElementData> = {
               children: [],
             },
           ],
+        },
+      ],
+    },
+  ],
+};
+
+export const rootTree: TreeNode<ElementData> = {
+  id: "$root",
+  data: { elementType: "root" },
+  children: [],
+};
+
+export const flexTree: TreeNode<ElementData> = {
+  id: "$root",
+  data: { elementType: "root" },
+  children: [
+    {
+      id: uniqueId(),
+      data: {
+        elementType: "flex",
+        direction: "column",
+      },
+      children: [
+        {
+          id: uniqueId(),
+          data: {
+            elementType: "text",
+            value: "text",
+          },
+          children: [],
         },
       ],
     },

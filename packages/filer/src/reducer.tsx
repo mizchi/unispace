@@ -36,6 +36,8 @@ export const swapNodes = actionCreator<{ aid: string; bid: string }>(
   "swap-nodes"
 );
 
+export const deleteNode = actionCreator<string>("delete-node");
+
 export const moveNode = actionCreator<{
   targetId: string;
   newParentId: string;
@@ -46,6 +48,7 @@ export type TreeAction =
   | ReturnType<typeof selectNode>
   | ReturnType<typeof addChild>
   | ReturnType<typeof moveNode>
+  | ReturnType<typeof deleteNode>
   | ReturnType<typeof swapNodes>;
 
 export const reducer = reducerWithoutInitialState<TreeState>()
@@ -77,6 +80,14 @@ export const reducer = reducerWithoutInitialState<TreeState>()
       newParentId,
       newIndex
     );
+    return {
+      ...state,
+      inv: newInv,
+      tree: invUtils.toNode(newInv),
+    };
+  })
+  .case(deleteNode, (state, nodeId) => {
+    const newInv = invUtils.removeNode(state.inv, nodeId);
     return {
       ...state,
       inv: newInv,

@@ -1,32 +1,12 @@
 import React, { useState, useContext, useCallback } from "react";
 import ReactDOM from "react-dom";
-import { Pane, Flex, Text } from "./components/elements";
+import { Pane, Flex } from "./components/elements";
 import { ElementSource } from "./types";
-import { sampleTree, ELEMENT_SOURCES } from "./mock";
+import { sampleTree, rootTree, flexTree, ELEMENT_SOURCES } from "./mock";
 import { useTreeState, TreeStateProvider } from "./contexts/tree";
-import { useDropOnTree } from "./contexts/dnd";
 import { SourceList } from "./components/SourceList";
 import { EditableView } from "./components/EditableView";
 import { View } from "./components/View";
-
-export function BlankPane(props: { parentId: string }) {
-  const [_data, ref] = useDropOnTree({
-    dropType: "blank",
-    parentId: props.parentId,
-  });
-  return (
-    <Flex
-      ref={ref}
-      flex={1}
-      padding={8}
-      background="#888"
-      border="1px dashed black"
-    >
-      <Text opacity={0.5}>DROP ME</Text>
-      {/* <Text>[DROP ME][{props.parentId}]</Text> */}
-    </Flex>
-  );
-}
 
 function EditableRootTree() {
   const { tree } = useTreeState();
@@ -51,6 +31,7 @@ function App() {
   const [mode, setMode] = useState<"editable" | "preview" | "output">(
     "editable"
   );
+
   return (
     <>
       <style
@@ -61,7 +42,7 @@ function App() {
         `,
         }}
       />
-      <TreeStateProvider initialTree={sampleTree}>
+      <TreeStateProvider initialTree={flexTree}>
         <Flex flexDirection="column">
           <Flex display="flex" flex={1}>
             <Flex>

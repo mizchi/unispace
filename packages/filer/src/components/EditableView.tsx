@@ -1,10 +1,10 @@
 import React from "react";
-import { Pane, Grid } from "./elements";
+import { Pane, Grid, Flex } from "./elements";
 import { Node as TreeNode } from "../tree-api";
 import { ElementData } from "../types";
 import flatten from "lodash-es/flatten";
 import { EditableBox } from "./EditableBox";
-import { BlankPane } from "../index";
+import { BlankPane } from "./BlankPane";
 import { View } from "./View";
 export function EditableView(props: {
   tree: TreeNode<ElementData>;
@@ -45,23 +45,8 @@ export function EditableView(props: {
       );
     }
     case "grid-area": {
-      const showBlankArea = props.tree.children.length === 0;
       return (
-        <EditableBox hideHeader tree={props.tree} depth={props.depth + 1}>
-          {showBlankArea ? (
-            <BlankPane parentId={props.tree.id} />
-          ) : (
-            props.tree.children.map((node) => {
-              return (
-                <EditableView
-                  key={node.id}
-                  tree={node}
-                  depth={props.depth + 1}
-                />
-              );
-            })
-          )}
-        </EditableBox>
+        <EditableBox hideHeader tree={props.tree} depth={props.depth + 1} />
       );
     }
     case "text": {
@@ -78,6 +63,39 @@ export function EditableView(props: {
         </EditableBox>
       );
     }
+
+    case "flex": {
+      const isBlank = props.tree.children.length === 0;
+      if (isBlank) {
+        return (
+          <EditableBox hideHeader tree={props.tree} depth={props.depth + 1}>
+            <Flex flexDirection={data.direction}>
+              {isBlank ? (
+                <BlankPane parentId={props.tree.id} />
+              ) : (
+                <View tree={props.tree} />
+              )}
+            </Flex>
+          </EditableBox>
+        );
+      }
+
+      return (
+        <EditableBox hideHeader tree={props.tree} depth={props.depth + 1}>
+          <Flex flexDirection={data.direction}>
+            <Flex flex={4} flexDirection={data.direction}>
+              {props.tree.children.map((child) => {
+                return <EditableView tree={child} depth={props.depth + 1} />;
+              })}
+            </Flex>
+            <Flex flex={1}>
+              <BlankPane parentId={props.tree.id} />
+            </Flex>
+          </Flex>
+        </EditableBox>
+      );
+    }
+
     default: {
       return (
         <EditableBox tree={props.tree} depth={props.depth + 1}>

@@ -75,6 +75,14 @@ export function useDropOnTree<T = any>(
                   src: drag.source.src,
                 };
               }
+
+              if (drag.source.sourceType == "flex") {
+                childData = {
+                  elementType: "flex",
+                  direction: drag.source.direction,
+                };
+              }
+
               if (drag.source.sourceType == "grid") {
                 childData = {
                   elementType: "grid",

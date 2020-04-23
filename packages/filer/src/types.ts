@@ -15,6 +15,11 @@ export interface GridData extends ElementNode {
   areas: string[][];
 }
 
+export interface FlexData extends ElementNode {
+  elementType: "flex";
+  direction: "column" | "row";
+}
+
 export interface GridAreaData extends ElementNode {
   elementType: "grid-area";
   gridArea: string;
@@ -40,6 +45,7 @@ export type ElementData =
   | GridData
   | GridAreaData
   | StyleData
+  | FlexData
   | TextData
   | ImageData;
 
@@ -61,6 +67,11 @@ export type ElementSource =
       rows: string[];
       columns: string[];
       areas: string[][];
+    }
+  | {
+      displayName: string;
+      sourceType: "flex";
+      direction: "row" | "column";
     };
 
 export type DragType =
