@@ -26,9 +26,11 @@ export const getInitialState = (tree: TreeNode<ElementData>) => {
 const actionCreator = actionCreatorFactory();
 
 export const selectNode = actionCreator<string | null>("select-node");
-export const addChild = actionCreator<{ parentId: string; data: ElementData }>(
-  "add-child"
-);
+export const addChild = actionCreator<{
+  parentId: string;
+  data: ElementData;
+  children?: TreeNode<ElementData>[];
+}>("add-child");
 
 export const swapNodes = actionCreator<{ aid: string; bid: string }>(
   "swap-nodes"
@@ -39,12 +41,6 @@ export const moveNode = actionCreator<{
   newParentId: string;
   newIndex?: number;
 }>("move-node");
-
-export const addGridAreaWithChild = actionCreator<{
-  parentId: string;
-  data: GridAreaData;
-  childData: ElementData;
-}>("add-grid-area-with-child");
 
 export type TreeAction =
   | ReturnType<typeof selectNode>
@@ -57,7 +53,7 @@ export const reducer = reducerWithoutInitialState<TreeState>()
     const newNode: TreeNode<ElementData> = {
       id: uniqueId(),
       data: payload.data,
-      children: [],
+      children: payload.children ?? [],
     };
     const newInv = invUtils.appendNode(state.inv, newNode, payload.parentId);
     return {
@@ -66,42 +62,8 @@ export const reducer = reducerWithoutInitialState<TreeState>()
       tree: invUtils.toNode(newInv),
     };
   })
-  .case(addGridAreaWithChild, (state, payload) => {
-    const gridAreaId = uniqueId();
-    const newNode: TreeNode<GridAreaData> = {
-      id: gridAreaId,
-      data: payload.data,
-      children: [],
-    };
-    const childNode: TreeNode<ElementData> = {
-      id: uniqueId(),
-      data: payload.childData,
-      children: [],
-    };
-
-    const inv1 = invUtils.appendNode<ElementData>(
-      state.inv,
-      newNode,
-      payload.parentId
-    );
-
-    const inv2 = invUtils.appendNode(inv1, childNode, gridAreaId);
-    return {
-      ...state,
-      inv: inv2,
-      tree: invUtils.toNode(inv2),
-    };
-  })
   .case(swapNodes, (state, { aid, bid }) => {
-    // const newInv = invUtils.swapNodes(state.inv, aid, bid);
-    // console.log("swapped", newInv);
-    // return {
-    //   ...state,
-    //   inv: newInv,
-    //   tree: invUtils.toNode(newInv),
-    // };
     const newTree = treeUtils.swapNodes(state.tree, aid, bid);
-    // console.log("swapped", newInv);
     return {
       ...state,
       inv: toInvertedTree(newTree),
@@ -109,17 +71,6 @@ export const reducer = reducerWithoutInitialState<TreeState>()
     };
   })
   .case(moveNode, (state, { targetId, newParentId, newIndex }) => {
-    // const newTree = treeUtils.moveNode(
-    //   state.tree,
-    //   targetId,
-    //   newParentId,
-    //   newIndex
-    // );
-    // return {
-    //   ...state,
-    //   inv: toInvertedTree(newTree),
-    //   tree: newTree,
-    // };
     const newInv = invUtils.moveNode(
       state.inv,
       targetId,

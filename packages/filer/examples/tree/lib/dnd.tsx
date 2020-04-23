@@ -4,23 +4,29 @@ import {
   DropTargetMonitor,
   DragSourceMonitor,
 } from "react-dnd";
-import { ElementData, GridAreaData, GridData } from "./types";
+import { ElementData, TreeNode, GridAreaData, GridData } from "./types";
 import { useTreeDispatch } from "./contexts";
-import { addGridAreaWithChild, swapNodes, moveNode, addChild } from "./reducer";
+import { swapNodes, moveNode, addChild } from "./reducer";
 import { ulid } from "ulid";
+import { uniqueId } from "lodash-es";
+// import { ElementData, TreeNode } from "./types";
 
 export const DND_CONTEXT = "dnd-context";
 
 export type ElementSource =
   | {
+      displayName: string;
       sourceType: "text";
       value: string;
     }
   | {
+      displayName: string;
+
       sourceType: "image";
       src: string;
     }
   | {
+      displayName: string;
       sourceType: "grid";
       rows: string[];
       columns: string[];
@@ -88,6 +94,7 @@ export function useDropOnTree<T = any>(
           switch (drop.dropType) {
             case "blank": {
               let childData: ElementData | null = null;
+              let children: TreeNode<ElementData>[] = [];
               if (drag.source.sourceType == "text") {
                 childData = {
                   elementType: "text",
@@ -108,13 +115,26 @@ export function useDropOnTree<T = any>(
                   columns: drag.source.columns,
                   areas: drag.source.areas,
                 };
+                // @ts-ignore
+                children = drag.source.areas.flat().map((areaName: string) => {
+                  return {
+                    id: uniqueId(),
+                    data: {
+                      elementType: "grid-area",
+                      gridArea: areaName,
+                    } as GridAreaData,
+                    children: [],
+                  };
+                });
               }
 
               if (childData == null) {
                 throw new Error(`Unknown ${drag.source.sourceType}`);
               }
 
-              dispatch(addChild({ parentId: drop.parentId, data: childData }));
+              dispatch(
+                addChild({ parentId: drop.parentId, data: childData, children })
+              );
               return;
               // TODO: create blank
             }

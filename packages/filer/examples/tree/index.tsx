@@ -4,6 +4,7 @@ import { Pane, Flex, Grid, Text } from "./lib/elements";
 import type { Node as TreeNode } from "@mizchi/tree-utils";
 import { ElementData } from "./lib/types";
 import { sampleTree } from "./lib/mock";
+import flatten from "lodash-es/flatten";
 import {
   useTreeState,
   TreeStateProvider,
@@ -14,20 +15,33 @@ import { useDragOnTree, useDropOnTree, ElementSource } from "./lib/dnd";
 
 const ELEMENT_SOURCES: ElementSource[] = [
   {
+    displayName: "Text",
     sourceType: "text",
     value: "",
   },
   {
+    displayName: "Image",
     sourceType: "image",
     src:
       "http://imgcc.naver.jp/kaze/mission/USER/20140612/42/4930882/68/598x375xe4022b20b838933f265c1591.jpg",
     // src: "",
   },
   {
+    displayName: "Grid(1x1)",
     sourceType: "grid",
     rows: ["1fr"],
     columns: ["1fr"],
-    areas: [["x"]],
+    areas: [["1"]],
+  },
+  {
+    displayName: "Grid(2x2)",
+    sourceType: "grid",
+    rows: ["1fr", "1fr"],
+    columns: ["1fr", "1fr"],
+    areas: [
+      ["a", "b"],
+      ["c", "d"],
+    ],
   },
 ];
 
@@ -48,7 +62,7 @@ function DraggableElementSourceItem(props: { source: ElementSource }) {
   });
   return (
     <Pane ref={ref} paddingTop={5} height={32} outline="1px solid black">
-      <Text>{props.source.sourceType}</Text>
+      <Text>{props.source.displayName}</Text>
     </Pane>
   );
 }
@@ -106,7 +120,7 @@ function EditableBox({
   );
 }
 
-function BlankArea(props: { gridArea: string; parentId: string }) {
+function BlankPane(props: { parentId: string }) {
   const [_data, ref] = useDropOnTree({
     dropType: "blank",
     parentId: props.parentId,
@@ -116,17 +130,14 @@ function BlankArea(props: { gridArea: string; parentId: string }) {
       ref={ref}
       flex={1}
       padding={8}
-      background="white"
+      background="#888"
       border="1px dashed black"
     >
-      <Text>[DROP ME][{props.gridArea}]</Text>
+      <Text opacity={0.5}>DROP ME</Text>
+      {/* <Text>[DROP ME][{props.parentId}]</Text> */}
     </Flex>
   );
 }
-
-// function Droppable() {
-
-// }
 
 function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
   const data = props.tree.data;
@@ -136,13 +147,11 @@ function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
         <EditableBox hideHeader tree={props.tree} depth={props.depth + 1} />
       );
     }
-
     case "grid": {
-      // @ts-ignore
-      const gridAreaNames = data.areas.flat() as string[];
+      const gridAreaNames = flatten(data.areas);
       const { rows, columns, areas } = data;
       return (
-        <EditableBox tree={props.tree} depth={props.depth + 1}>
+        <EditableBox hideHeader tree={props.tree} depth={props.depth + 1}>
           <Grid rows={rows} columns={columns} areas={areas}>
             {gridAreaNames.map((gridArea) => {
               const hit = props.tree.children.find((c) => {
@@ -166,17 +175,11 @@ function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
       );
     }
     case "grid-area": {
-      // const newNode = (
-      //   <BlankGridArea
-      //     gridArea={gridArea}
-      //     parentId={props.tree.id}
-      //   />
-      // )
-      const showBlank = props.tree.children.length === 0;
+      const showBlankArea = props.tree.children.length === 0;
       return (
-        <EditableBox tree={props.tree} depth={props.depth + 1}>
-          {showBlank ? (
-            <BlankArea gridArea={data.gridArea} parentId={props.tree.id} />
+        <EditableBox hideHeader tree={props.tree} depth={props.depth + 1}>
+          {showBlankArea ? (
+            <BlankPane parentId={props.tree.id} />
           ) : (
             props.tree.children.map((node) => {
               return (
@@ -230,8 +233,7 @@ function View(props: { tree: TreeNode<ElementData> }) {
       );
     }
     case "grid": {
-      // @ts-ignore
-      const gridAreaNames = data.areas.flat() as string[];
+      const gridAreaNames = flatten(data.areas);
       const { rows, columns, areas } = data;
       return (
         <Grid rows={rows} columns={columns} areas={areas}>
@@ -294,8 +296,19 @@ function PreviewRootTree() {
   return <View tree={tree} />;
 }
 
+function OutputTree() {
+  const { tree } = useTreeState();
+  return (
+    <Pane minHeight={0} height="80vh" overflow="auto">
+      <pre>{JSON.stringify(tree, null, 2)}</pre>
+    </Pane>
+  );
+}
+
 function App() {
-  const [mode, setMode] = useState<"editable" | "preview">("editable");
+  const [mode, setMode] = useState<"editable" | "preview" | "output">(
+    "editable"
+  );
   return (
     <>
       <style
@@ -329,6 +342,12 @@ function App() {
                     >
                       preview
                     </button>
+                    <button
+                      disabled={mode === "output"}
+                      onClick={() => setMode("output")}
+                    >
+                      output
+                    </button>
                   </Flex>
                   {mode === "editable" && (
                     <Flex flex={1}>
@@ -338,6 +357,11 @@ function App() {
                   {mode === "preview" && (
                     <Flex flex={1}>
                       <PreviewRootTree />
+                    </Flex>
+                  )}
+                  {mode === "output" && (
+                    <Flex flex={1}>
+                      <OutputTree />
                     </Flex>
                   )}
                 </Flex>

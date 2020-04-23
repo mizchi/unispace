@@ -8,7 +8,7 @@ import {
   swapNodes,
   getCursor,
   setNodeWithCursor,
-  moveNode,
+  // moveNode,
   Node,
 } from "../";
 
@@ -178,50 +178,50 @@ test("setNodeWithCursor", () => {
   assert.equal(r2.id, "added");
 });
 
-test("moveNode", () => {
-  const r = moveNode(sampleTree1, "c1-0", "c0");
-  // @ts-ignore
-  assert.deepEqual(r.children[0].children[0].id, "c1-0");
-  // @ts-ignore
-  assert.deepEqual(r.children[0].children.length, 1);
-  // @ts-ignore
-  assert.deepEqual(r.children[1].children.length, 0);
-});
+// test("moveNode", () => {
+//   const r = moveNode(sampleTree1, "c1-0", "c0");
+//   // @ts-ignore
+//   assert.deepEqual(r.children[0].children[0].id, "c1-0");
+//   // @ts-ignore
+//   assert.deepEqual(r.children[0].children.length, 1);
+//   // @ts-ignore
+//   assert.deepEqual(r.children[1].children.length, 0);
+// });
 
-test("moveNode", () => {
-  const r = moveNode(sampleTree1, "c1-0", "c0");
-  // @ts-ignore
-  assert.deepEqual(r.children[0].children[0].id, "c1-0");
-  // @ts-ignore
-  assert.deepEqual(r.children[0].children.length, 1);
-  // @ts-ignore
-  assert.deepEqual(r.children[1].children.length, 0);
-});
+// test("moveNode", () => {
+//   const r = moveNode(sampleTree1, "c1-0", "c0");
+//   // @ts-ignore
+//   assert.deepEqual(r.children[0].children[0].id, "c1-0");
+//   // @ts-ignore
+//   assert.deepEqual(r.children[0].children.length, 1);
+//   // @ts-ignore
+//   assert.deepEqual(r.children[1].children.length, 0);
+// });
 
-test("moveNode with index", () => {
-  const r0 = moveNode(sampleTree2, "c0-0", "c1", 1);
+// test("moveNode with index", () => {
+//   const r0 = moveNode(sampleTree2, "c0-0", "c1", 1);
 
-  // @ts-ignore
-  assert.deepEqual(r0.children[0].children.length, 0);
-  // @ts-ignore
-  assert.deepEqual(r0.children[1].children.length, 3);
-  // @ts-ignore
-  assert.deepEqual(
-    r0.children[1].children.map((i) => i.id),
-    ["c1-0", "c0-0", "c1-1"]
-  );
+//   // @ts-ignore
+//   assert.deepEqual(r0.children[0].children.length, 0);
+//   // @ts-ignore
+//   assert.deepEqual(r0.children[1].children.length, 3);
+//   // @ts-ignore
+//   assert.deepEqual(
+//     r0.children[1].children.map((i) => i.id),
+//     ["c1-0", "c0-0", "c1-1"]
+//   );
 
-  const r1 = moveNode(sampleTree2, "c1-0", "c0", 0);
+//   const r1 = moveNode(sampleTree2, "c1-0", "c0", 0);
 
-  // @ts-ignore
-  assert.deepEqual(
-    r1.children[0].children.map((i) => i.id),
-    ["c1-0", "c0-0"]
-  );
+//   // @ts-ignore
+//   assert.deepEqual(
+//     r1.children[0].children.map((i) => i.id),
+//     ["c1-0", "c0-0"]
+//   );
 
-  // @ts-ignore
-  assert.deepEqual(
-    r1.children[1].children.map((i) => i.id),
-    ["c1-1"]
-  );
-});
+//   // @ts-ignore
+//   assert.deepEqual(
+//     r1.children[1].children.map((i) => i.id),
+//     ["c1-1"]
+//   );
+// });
