@@ -144,25 +144,26 @@ export function removeNodeFromTree<T>(
   });
 }
 
-export function moveNode<T>(
-  tree: Node<T>,
-  targetId: string,
-  newParentId: string,
-  newIndex?: number
-) {
-  const targetNode = getNode(tree, targetId) as Node<T>;
-  const removedTree = removeNodeFromTree(tree, targetId);
-  const cursor = getCursor(removedTree, newParentId) as Cursor;
+// TOOD: Fix me
+// export function moveNode<T>(
+//   tree: Node<T>,
+//   targetId: string,
+//   newParentId: string,
+//   newIndex?: number
+// ) {
+//   const targetNode = getNode(tree, targetId) as Node<T>;
+//   const removedTree = removeNodeFromTree(tree, targetId);
+//   const cursor = getCursor(removedTree, newParentId) as Cursor;
 
-  const idx =
-    newIndex == null
-      ? // last index
-        ((getNode(removedTree, newParentId) as Node<T>).children as Array<
-          Node<T>
-        >).length
-      : newIndex;
-  return appendNodeWithCursor(removedTree, targetNode, cursor.concat([idx]));
-}
+//   const idx =
+//     newIndex == null
+//       ? // last index
+//         ((getNode(removedTree, newParentId) as Node<T>).children as Array<
+//           Node<T>
+//         >).length
+//       : newIndex;
+//   return appendNodeWithCursor(removedTree, targetNode, cursor.concat([idx]));
+// }
 
 export function appendNodeAfter<T>(
   tree: Node<T>,

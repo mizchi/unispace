@@ -36,6 +36,14 @@ export const sampleTree: TreeNode<ElementData> = {
           id: uniqueId(),
           data: {
             elementType: "grid-area",
+            gridArea: "b",
+          },
+          children: [],
+        },
+        {
+          id: uniqueId(),
+          data: {
+            elementType: "grid-area",
             gridArea: "c",
           },
           children: [
@@ -54,12 +62,20 @@ export const sampleTree: TreeNode<ElementData> = {
                     elementType: "grid-area",
                     gridArea: "e",
                   },
+                  children: [],
+                },
+                {
+                  id: uniqueId(),
+                  data: {
+                    elementType: "grid-area",
+                    gridArea: "f",
+                  },
                   children: [
                     {
                       id: uniqueId(),
                       data: {
                         elementType: "text",
-                        value: "bar",
+                        value: "yyy",
                       },
                       children: [],
                     },

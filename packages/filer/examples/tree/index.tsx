@@ -86,16 +86,17 @@ function EditableBox({
       {!hideHeader &&
         (header ?? (
           <Flex ref={ref} height="24px" fontSize={16}>
-            <div
+            <button
               onClick={() => {
                 dispatch(selectNode(tree.id));
               }}
             >
-              {tree.data.elementType}[{tree.id.slice(-4)}]
-            </div>
+              [i]
+            </button>
+            {tree.data.elementType}[{tree.id.slice(-4)}]
           </Flex>
         ))}
-      <Flex flex={1} padding={8} background="white">
+      <Flex flex={1} paddingLeft={4} background="white">
         {children ||
           tree.children.map((node) => {
             return <EditableView key={node.id} tree={node} depth={depth + 1} />;
@@ -105,11 +106,10 @@ function EditableBox({
   );
 }
 
-function BlankGridArea(props: { gridArea: string; parentId: string }) {
+function BlankArea(props: { gridArea: string; parentId: string }) {
   const [_data, ref] = useDropOnTree({
-    dropType: "blank-grid-area",
+    dropType: "blank",
     parentId: props.parentId,
-    gridArea: props.gridArea,
   });
   return (
     <Flex
@@ -130,7 +130,6 @@ function BlankGridArea(props: { gridArea: string; parentId: string }) {
 
 function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
   const data = props.tree.data;
-  console.log(props.tree.data);
   switch (data.elementType) {
     case "root": {
       return (
@@ -154,18 +153,11 @@ function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
               });
               return (
                 <Pane gridArea={gridArea} key={gridArea}>
-                  {hit ? (
-                    <EditableView
-                      key={hit.id}
-                      tree={hit}
-                      depth={props.depth + 1}
-                    />
-                  ) : (
-                    <BlankGridArea
-                      gridArea={gridArea}
-                      parentId={props.tree.id}
-                    />
-                  )}
+                  <EditableView
+                    key={hit.id}
+                    tree={hit}
+                    depth={props.depth + 1}
+                  />
                 </Pane>
               );
             })}
@@ -174,7 +166,30 @@ function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
       );
     }
     case "grid-area": {
-      return <EditableBox tree={props.tree} depth={props.depth + 1} />;
+      // const newNode = (
+      //   <BlankGridArea
+      //     gridArea={gridArea}
+      //     parentId={props.tree.id}
+      //   />
+      // )
+      const showBlank = props.tree.children.length === 0;
+      return (
+        <EditableBox tree={props.tree} depth={props.depth + 1}>
+          {showBlank ? (
+            <BlankArea gridArea={data.gridArea} parentId={props.tree.id} />
+          ) : (
+            props.tree.children.map((node) => {
+              return (
+                <EditableView
+                  key={node.id}
+                  tree={node}
+                  depth={props.depth + 1}
+                />
+              );
+            })
+          )}
+        </EditableBox>
+      );
     }
     case "text": {
       return (

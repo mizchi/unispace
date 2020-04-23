@@ -6,7 +6,7 @@ import {
 } from "react-dnd";
 import { ElementData, GridAreaData, GridData } from "./types";
 import { useTreeDispatch } from "./contexts";
-import { addGridAreaWithChild, swapNodes, moveNode } from "./reducer";
+import { addGridAreaWithChild, swapNodes, moveNode, addChild } from "./reducer";
 import { ulid } from "ulid";
 
 export const DND_CONTEXT = "dnd-context";
@@ -39,13 +39,8 @@ type DragType =
 
 type DropType =
   | {
-      dropType: "blank-grid-area";
-      parentId: string;
-      gridArea: string;
-    }
-  | {
-      id: string;
       dropType: "blank";
+      parentId: string;
     }
   | {
       id: string;
@@ -92,15 +87,6 @@ export function useDropOnTree<T = any>(
         case "source": {
           switch (drop.dropType) {
             case "blank": {
-              // TODO: create
-              return;
-            }
-            case "blank-grid-area": {
-              const newGridAreaData: GridAreaData = {
-                elementType: "grid-area",
-                gridArea: drop.gridArea,
-              };
-
               let childData: ElementData | null = null;
               if (drag.source.sourceType == "text") {
                 childData = {
@@ -128,13 +114,7 @@ export function useDropOnTree<T = any>(
                 throw new Error(`Unknown ${drag.source.sourceType}`);
               }
 
-              dispatch(
-                addGridAreaWithChild({
-                  parentId: drop.parentId,
-                  data: newGridAreaData,
-                  childData,
-                })
-              );
+              dispatch(addChild({ parentId: drop.parentId, data: childData }));
               return;
               // TODO: create blank
             }
@@ -146,31 +126,14 @@ export function useDropOnTree<T = any>(
         case "element": {
           switch (drop.dropType) {
             case "blank": {
+              dispatch(
+                moveNode({
+                  targetId: drag.id,
+                  newParentId: drop.parentId,
+                })
+              );
               return;
-              // TODO: create
             }
-            case "blank-grid-area": {
-              const newGridAreaData: GridAreaData = {
-                elementType: "grid-area",
-                gridArea: drop.gridArea,
-              };
-
-              console.log("move element to new grid-area with", drag);
-
-              // dispatch(
-              //   moveNode({
-              //     targetId: drag.id,
-              //     newParentId: drop.parentId
-              //     parentId: drop.parentId,
-              //     data: newGridAreaData,
-              //     childData,
-              //   })
-              // );
-
-              return;
-              // TODO: create
-            }
-
             case "existed-element": {
               dispatch(swapNodes({ aid: drag.id, bid: drop.id }));
               return;
