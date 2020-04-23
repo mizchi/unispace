@@ -1,13 +1,12 @@
 import { useContext, useReducer, Dispatch } from "react";
 import React from "react";
-import { toInvertedTree, InvertedTree } from "@mizchi/tree-utils/inverted";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
 import { ElementData, TreeNode } from "./types";
-import { reducer, TreeState, getInitialState } from "./reducer";
+import { reducer, TreeState, getInitialState, TreeAction } from "./reducer";
 
 export const TreeStateContext = React.createContext<TreeState>(null as any);
-export const TreeDispatchContext = React.createContext<Dispatch<any>>(
+export const TreeDispatchContext = React.createContext<Dispatch<TreeAction>>(
   null as any
 );
 

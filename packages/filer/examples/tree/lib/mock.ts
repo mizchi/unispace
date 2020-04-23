@@ -1,77 +1,65 @@
-import { ulid } from "ulid";
 import { ElementData } from "./types";
-import type { Node as TreeNode } from "@mizchi/tree-utils";
+import type { Node as TreeNode } from "../tree-api";
+import uniqueId from "lodash-es/uniqueId";
 
 export const sampleTree: TreeNode<ElementData> = {
-  id: "root",
+  id: "$root",
   data: { elementType: "root" },
   children: [
     {
-      id: ulid(),
+      id: uniqueId(),
       data: {
         elementType: "grid",
-        props: {
-          rows: ["1fr", "1fr"],
-          columns: ["1fr", "1fr"],
-          areas: [
-            ["a", "b"],
-            ["c", "d"],
-          ],
-        },
+        rows: ["1fr", "1fr"],
+        columns: ["1fr", "1fr"],
+        areas: [
+          ["a", "b"],
+          ["c", "d"],
+        ],
       },
       children: [
         {
-          id: ulid(),
+          id: uniqueId(),
           data: {
             elementType: "grid-area",
-            props: {
-              gridArea: "a",
-            },
+            gridArea: "a",
           },
           children: [
             {
-              id: ulid(),
-              data: { elementType: "text", props: { value: "hello" } },
+              id: uniqueId(),
+              data: { elementType: "text", value: "foo" },
               children: [],
             },
           ],
         },
         {
-          id: ulid(),
+          id: uniqueId(),
           data: {
             elementType: "grid-area",
-            props: {
-              gridArea: "c",
-            },
+            gridArea: "c",
           },
           children: [
             {
-              id: ulid(),
+              id: uniqueId(),
               data: {
                 elementType: "grid",
-                props: {
-                  rows: ["1fr"],
-                  columns: ["1fr", "1fr"],
-                  areas: [["e", "f"]],
-                },
+                rows: ["1fr"],
+                columns: ["1fr", "1fr"],
+                areas: [["e", "f"]],
               },
               children: [
                 {
-                  id: ulid(),
+                  id: uniqueId(),
                   data: {
                     elementType: "grid-area",
-                    props: {
-                      gridArea: "e",
-                    },
+                    gridArea: "e",
                   },
                   children: [
                     {
-                      id: ulid(),
+                      id: uniqueId(),
                       data: {
                         elementType: "text",
-                        props: {
-                          value: "hello",
-                        },
+                        value: "bar",
                       },
                       children: [],
                     },
@@ -82,22 +70,18 @@ export const sampleTree: TreeNode<ElementData> = {
           ],
         },
         {
-          id: ulid(),
+          id: uniqueId(),
           data: {
             elementType: "grid-area",
-            props: {
-              gridArea: "d",
-            },
+            gridArea: "d",
           },
           children: [
             {
-              id: ulid(),
+              id: uniqueId(),
               data: {
                 elementType: "image",
-                props: {
-                  src:
-                    "http://imgcc.naver.jp/kaze/mission/USER/20140612/42/4930882/68/598x375xe4022b20b838933f265c1591.jpg",
-                },
+                src:
+                  "http://imgcc.naver.jp/kaze/mission/USER/20140612/42/4930882/68/598x375xe4022b20b838933f265c1591.jpg",
               },
               children: [],
             },

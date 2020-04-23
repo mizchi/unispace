@@ -1,24 +1,57 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useCallback, useRef } from "react";
 import ReactDOM from "react-dom";
 import { Pane, Flex, Grid, Text } from "./lib/elements";
-import { Draggable, Droppable } from "./lib/dnd";
-import { ulid } from "ulid";
-
 import type { Node as TreeNode } from "@mizchi/tree-utils";
 import { ElementData } from "./lib/types";
 import { sampleTree } from "./lib/mock";
-import { useTreeState, TreeStateProvider } from "./lib/contexts";
+import {
+  useTreeState,
+  TreeStateProvider,
+  useTreeDispatch,
+} from "./lib/contexts";
+import { selectNode } from "./lib/reducer";
+import { useDragOnTree, useDropOnTree, ElementSource } from "./lib/dnd";
 
-const recipes = [
+const ELEMENT_SOURCES: ElementSource[] = [
   {
-    id: "text",
-    initialProps: {
-      children: "hello",
-    },
+    sourceType: "text",
+    value: "",
   },
-  { id: "image", initialProps: { src: "...." } },
-  { id: "grid" },
+  {
+    sourceType: "image",
+    src:
+      "http://imgcc.naver.jp/kaze/mission/USER/20140612/42/4930882/68/598x375xe4022b20b838933f265c1591.jpg",
+    // src: "",
+  },
+  {
+    sourceType: "grid",
+    rows: ["1fr"],
+    columns: ["1fr"],
+    areas: [["x"]],
+  },
 ];
+
+function SourceList() {
+  return (
+    <Pane>
+      {ELEMENT_SOURCES.map((source, index) => {
+        return <DraggableElementSourceItem key={index} source={source} />;
+      })}
+    </Pane>
+  );
+}
+
+function DraggableElementSourceItem(props: { source: ElementSource }) {
+  const [, ref] = useDragOnTree({
+    dragType: "source",
+    source: props.source,
+  });
+  return (
+    <Pane ref={ref} paddingTop={5} height={32} outline="1px solid black">
+      <Text>{props.source.sourceType}</Text>
+    </Pane>
+  );
+}
 
 function EditableBox({
   tree,
@@ -33,12 +66,33 @@ function EditableBox({
   children?: any;
   hideHeader?: boolean;
 }) {
+  const dispatch = useTreeDispatch();
+
+  const ref = useRef<HTMLDivElement>(null);
+  const [, dragRef] = useDragOnTree({
+    dragType: "element",
+    id: tree.id,
+  });
+
+  const [, dropRef] = useDropOnTree({
+    dropType: "existed-element",
+    id: tree.id,
+  });
+
+  dragRef(dropRef(ref));
+
   return (
     <Flex flexDirection="column" border="1px solid #ccc" background="#eee">
       {!hideHeader &&
         (header ?? (
-          <Flex height="24px" fontSize={16}>
-            {tree.data.elementType}({tree.id.slice(-4)})
+          <Flex ref={ref} height="24px" fontSize={16}>
+            <div
+              onClick={() => {
+                dispatch(selectNode(tree.id));
+              }}
+            >
+              {tree.data.elementType}[{tree.id.slice(-4)}]
+            </div>
           </Flex>
         ))}
       <Flex flex={1} padding={8} background="white">
@@ -51,39 +105,51 @@ function EditableBox({
   );
 }
 
-function BlankGridArea(props: { gridArea: string }) {
+function BlankGridArea(props: { gridArea: string; parentId: string }) {
+  const [_data, ref] = useDropOnTree({
+    dropType: "blank-grid-area",
+    parentId: props.parentId,
+    gridArea: props.gridArea,
+  });
   return (
-    <Droppable
-      dropId={ulid()}
-      onDrop={() => {
-        console.log("on drop");
-      }}
+    <Flex
+      ref={ref}
+      flex={1}
+      padding={8}
+      background="white"
+      border="1px dashed black"
     >
-      <Flex flex={1} padding={8} background="white" border="1px dashed black">
-        <Text>DropMe [{props.gridArea}]</Text>
-      </Flex>
-    </Droppable>
+      <Text>[DROP ME][{props.gridArea}]</Text>
+    </Flex>
   );
 }
 
+// function Droppable() {
+
+// }
+
 function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
   const data = props.tree.data;
+  console.log(props.tree.data);
   switch (data.elementType) {
     case "root": {
       return (
         <EditableBox hideHeader tree={props.tree} depth={props.depth + 1} />
       );
     }
+
     case "grid": {
-      const gridAreaNames = data.props.areas.flat();
+      // @ts-ignore
+      const gridAreaNames = data.areas.flat() as string[];
+      const { rows, columns, areas } = data;
       return (
         <EditableBox tree={props.tree} depth={props.depth + 1}>
-          <Grid {...data.props}>
+          <Grid rows={rows} columns={columns} areas={areas}>
             {gridAreaNames.map((gridArea) => {
               const hit = props.tree.children.find((c) => {
                 return (
                   c.data.elementType === "grid-area" &&
-                  c.data.props.gridArea === gridArea
+                  c.data.gridArea === gridArea
                 );
               });
               return (
@@ -95,7 +161,10 @@ function EditableView(props: { tree: TreeNode<ElementData>; depth: number }) {
                       depth={props.depth + 1}
                     />
                   ) : (
-                    <BlankGridArea gridArea={gridArea} />
+                    <BlankGridArea
+                      gridArea={gridArea}
+                      parentId={props.tree.id}
+                    />
                   )}
                 </Pane>
               );
@@ -138,32 +207,29 @@ function View(props: { tree: TreeNode<ElementData> }) {
       // return <>root</>;
       return (
         <Pane>
-          root
           {props.tree.children.map((c) => {
-            return <>{c.id}</>;
+            return <View key={c.id} tree={c} />;
+            // return <>{c.id}</>;
           })}
         </Pane>
       );
-      // );
     }
     case "grid": {
-      const gridAreaNames = data.props.areas.flat();
+      // @ts-ignore
+      const gridAreaNames = data.areas.flat() as string[];
+      const { rows, columns, areas } = data;
       return (
-        <Grid {...data.props}>
+        <Grid rows={rows} columns={columns} areas={areas}>
           {gridAreaNames.map((gridArea) => {
-            const hit = props.tree.children.find((c) => {
+            const existNode = props.tree.children.find((c) => {
               return (
                 c.data.elementType === "grid-area" &&
-                c.data.props.gridArea === gridArea
+                c.data.gridArea === gridArea
               );
             });
             return (
               <Pane gridArea={gridArea} key={gridArea}>
-                {hit ? (
-                  <View key={hit.id} tree={hit} />
-                ) : (
-                  <BlankGridArea gridArea={gridArea} />
-                )}
+                {existNode && <View key={existNode.id} tree={existNode} />}
               </Pane>
             );
           })}
@@ -171,16 +237,22 @@ function View(props: { tree: TreeNode<ElementData> }) {
       );
     }
     case "grid-area": {
-      return <View tree={props.tree} />;
+      return (
+        <>
+          {props.tree.children.map((c) => {
+            return <View key={c.id} tree={c} />;
+          })}
+        </>
+      );
     }
     case "text": {
-      return <Text>{data.props.value}</Text>;
+      return <Text>{data.value}</Text>;
     }
     case "image": {
       return (
         <Pane>
           <img
-            src={data.props.src}
+            src={data.src}
             style={{
               width: "auto",
               height: "auto",
@@ -207,22 +279,6 @@ function PreviewRootTree() {
   return <View tree={tree} />;
 }
 
-function SourceList() {
-  return (
-    <Pane>
-      {recipes.map((r) => {
-        return (
-          <Draggable id={r.id} key={r.id} sourceType="newItem">
-            <Pane padding={8} height="32px" outline="1px solid black">
-              {r.id}
-            </Pane>
-          </Draggable>
-        );
-      })}
-    </Pane>
-  );
-}
-
 function App() {
   const [mode, setMode] = useState<"editable" | "preview">("editable");
   return (
@@ -235,9 +291,9 @@ function App() {
         `,
         }}
       />
-      <Flex flexDirection="column">
-        <Flex display="flex" flex={1}>
-          <TreeStateProvider initialTree={sampleTree}>
+      <TreeStateProvider initialTree={sampleTree}>
+        <Flex flexDirection="column">
+          <Flex display="flex" flex={1}>
             <Flex>
               <Pane width={300}>
                 <SourceList />
@@ -272,11 +328,28 @@ function App() {
                 </Flex>
               </Pane>
             </Flex>
-            <Pane width={300}>Right</Pane>
-          </TreeStateProvider>
+            <Pane width={300}>
+              <ElementPropsEditor />
+            </Pane>
+          </Flex>
         </Flex>
-      </Flex>
+      </TreeStateProvider>
     </>
+  );
+}
+
+function ElementPropsEditor() {
+  const { selectedId, inv } = useTreeState();
+  if (!selectedId) {
+    return <>None</>;
+  }
+  const data = inv.dataMap[selectedId];
+  return (
+    <Pane>
+      <pre style={{ padding: 0, margin: 0 }}>
+        {JSON.stringify(data, null, 2)}
+      </pre>{" "}
+    </Pane>
   );
 }
 

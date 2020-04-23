@@ -1,83 +1,187 @@
-import { useDrag, DndProvider, useDrop, DragObjectWithType } from "react-dnd";
-import React from "react";
-import { Pane } from "./elements";
+import {
+  useDrag,
+  useDrop,
+  DropTargetMonitor,
+  DragSourceMonitor,
+} from "react-dnd";
+import { ElementData, GridAreaData, GridData } from "./types";
+import { useTreeDispatch } from "./contexts";
+import { addGridAreaWithChild, swapNodes, moveNode } from "./reducer";
+import { ulid } from "ulid";
 
 export const DND_CONTEXT = "dnd-context";
 
-interface DragObject extends DragObjectWithType {
-  type: string;
-  dragId: string;
-  sourceType: string;
-}
+export type ElementSource =
+  | {
+      sourceType: "text";
+      value: string;
+    }
+  | {
+      sourceType: "image";
+      src: string;
+    }
+  | {
+      sourceType: "grid";
+      rows: string[];
+      columns: string[];
+      areas: string[][];
+    };
 
-type DropResult = {
-  delta: { x: number; y: number } | null;
+type DragType =
+  | {
+      dragType: "source";
+      source: ElementSource;
+    }
+  | {
+      dragType: "element";
+      id: string;
+    };
+
+type DropType =
+  | {
+      dropType: "blank-grid-area";
+      parentId: string;
+      gridArea: string;
+    }
+  | {
+      id: string;
+      dropType: "blank";
+    }
+  | {
+      id: string;
+      dropType: "existed-element";
+    };
+
+type DragSpec<T> = {
+  canDrag?: () => boolean;
+  collect?: (monitor: DragSourceMonitor) => T;
 };
 
-export function Draggable(props: {
-  id: string;
-  children: any;
-  height?: any;
-  sourceType: string;
-}) {
-  const [data, ref, preview] = useDrag<
-    DragObject,
-    DragObject,
-    { isDragging: boolean }
-  >({
-    begin(monitor) {
-      console.log("drag begin", props.id);
-    },
-    end(dropResult, monitor) {},
-    // previewOptions: {},
-    canDrag() {
-      return true;
+export function useDragOnTree<T = any>(
+  dragType: DragType,
+  spec: DragSpec<T> = {}
+) {
+  return useDrag<DragType & { type: typeof DND_CONTEXT }, void, T>({
+    canDrag: spec.canDrag ?? (() => true),
+    begin() {
+      console.log("begin", dragType);
     },
     item: {
       type: DND_CONTEXT,
-      dragId: props.id,
-      sourceType: props.sourceType,
+      ...dragType,
     },
-    collect: (monitor) => ({
-      isDragging: monitor.isDragging(),
-    }),
+    collect: spec.collect,
   });
-  return (
-    <Pane height={props.height} ref={ref}>
-      {props.children}
-    </Pane>
-  );
 }
 
-export function Droppable(props: {
-  dropId: string;
-  children: any;
-  onDrop: (payload: { dragId: string; dropId: string }) => void;
-}) {
-  const [data, drop] = useDrop<DragObject, DropResult, { isOver: boolean }>({
+export function useDropOnTree<T = any>(
+  drop: DropType,
+  spec: {
+    canDrop?: () => boolean;
+    collect?: (monitor: DropTargetMonitor) => T;
+  } = {}
+) {
+  const dispatch = useTreeDispatch();
+  return useDrop<DragType & { type: typeof DND_CONTEXT }, any, T>({
     accept: DND_CONTEXT,
-    hover(item, monitor) {
-      // console.log("hover");
-    },
-    canDrop() {
-      return true;
-    },
-    drop(dragItem, monitor) {
-      props.onDrop({ dropId: props.dropId, dragId: dragItem.dragId });
-      return {
-        delta: monitor.getDifferenceFromInitialOffset(),
-      };
-    },
-    collect(monitor) {
-      return {
-        isOver: monitor.isOver(),
-      };
+    canDrop: spec.canDrop || (() => true),
+    collect: spec.collect,
+    drop(drag, _monitor) {
+      console.log("drag", drag, ": drop to", drop);
+      switch (drag.dragType) {
+        case "source": {
+          switch (drop.dropType) {
+            case "blank": {
+              // TODO: create
+              return;
+            }
+            case "blank-grid-area": {
+              const newGridAreaData: GridAreaData = {
+                elementType: "grid-area",
+                gridArea: drop.gridArea,
+              };
+
+              let childData: ElementData | null = null;
+              if (drag.source.sourceType == "text") {
+                childData = {
+                  elementType: "text",
+                  value: ulid().slice(-5),
+                };
+              }
+
+              if (drag.source.sourceType == "image") {
+                childData = {
+                  elementType: "image",
+                  src: drag.source.src,
+                };
+              }
+              if (drag.source.sourceType == "grid") {
+                childData = {
+                  elementType: "grid",
+                  rows: drag.source.rows,
+                  columns: drag.source.columns,
+                  areas: drag.source.areas,
+                };
+              }
+
+              if (childData == null) {
+                throw new Error(`Unknown ${drag.source.sourceType}`);
+              }
+
+              dispatch(
+                addGridAreaWithChild({
+                  parentId: drop.parentId,
+                  data: newGridAreaData,
+                  childData,
+                })
+              );
+              return;
+              // TODO: create blank
+            }
+            default: {
+              return;
+            }
+          }
+        }
+        case "element": {
+          switch (drop.dropType) {
+            case "blank": {
+              return;
+              // TODO: create
+            }
+            case "blank-grid-area": {
+              const newGridAreaData: GridAreaData = {
+                elementType: "grid-area",
+                gridArea: drop.gridArea,
+              };
+
+              console.log("move element to new grid-area with", drag);
+
+              // dispatch(
+              //   moveNode({
+              //     targetId: drag.id,
+              //     newParentId: drop.parentId
+              //     parentId: drop.parentId,
+              //     data: newGridAreaData,
+              //     childData,
+              //   })
+              // );
+
+              return;
+              // TODO: create
+            }
+
+            case "existed-element": {
+              dispatch(swapNodes({ aid: drag.id, bid: drop.id }));
+              return;
+            }
+            default: {
+              return;
+            }
+          }
+        }
+      }
+      return {};
     },
   });
-
-  return (
-    <Pane ref={drop} background={data.isOver ? "red" : "transparent"}>
-      {props.children}
-    </Pane>
-  );
 }
