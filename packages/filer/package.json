@@ -6,6 +6,7 @@
     "prepublishOnly": "yarn build",
     "build": "tsc -p .",
     "dev": "tsc -p . --watch",
+    "demo": "webpack-dev-server --config webpack.config.demo.js",
     "demo:simple": "webpack-dev-server --config examples/simple/webpack.config.js"
   },
   "dependencies": {

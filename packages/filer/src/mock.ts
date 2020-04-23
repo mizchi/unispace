@@ -1,5 +1,5 @@
 import { ElementData } from "./types";
-import type { Node as TreeNode } from "../tree-api";
+import type { Node as TreeNode } from "./tree-api";
 import uniqueId from "lodash-es/uniqueId";
 
 export const sampleTree: TreeNode<ElementData> = {

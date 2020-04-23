@@ -1,4 +1,4 @@
-export type { Node as TreeNode } from "../tree-api";
+export type { Node as TreeNode } from "./tree-api";
 
 export interface ElementNode {
   elementType: string;

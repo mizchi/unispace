@@ -1,9 +1,9 @@
-import { toInvertedTree, InvertedTree } from "../tree-api/inverted";
+import { toInvertedTree, InvertedTree } from "./tree-api/inverted";
 import { reducerWithoutInitialState } from "typescript-fsa-reducers";
 import { ElementData, TreeNode, GridAreaData } from "./types";
 import actionCreatorFactory from "typescript-fsa";
-import * as invUtils from "../tree-api/inverted";
-import * as treeUtils from "../tree-api";
+import * as invUtils from "./tree-api/inverted";
+import * as treeUtils from "./tree-api";
 
 // import { ulid } from "ulid";
 import uniqueId from "lodash-es/uniqueId";

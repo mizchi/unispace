@@ -10,7 +10,7 @@ import {
   setNodeWithCursor,
   // moveNode,
   Node,
-} from "../";
+} from "..";
 
 export const sampleTree1: Node<number> = {
   id: "root",
