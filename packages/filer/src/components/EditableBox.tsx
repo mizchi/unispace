@@ -1,20 +1,22 @@
 import React, { useRef } from "react";
-import { Flex } from "./elements";
-import { Node as TreeNode } from "../tree-api";
-import { ElementData } from "../types";
-import { useTreeDispatch } from "../contexts/tree";
-import { selectNode, deleteNode } from "../reducer";
 import { useDragOnTree, useDropOnTree } from "../contexts/dnd";
-import { EditableView } from "./EditableView";
+import { useTreeDispatch } from "../contexts/tree";
+import { deleteNode, selectNode } from "../reducer";
+import { ElementTree } from "../types";
 import { BlankPane } from "./BlankPane";
+import { EditableView } from "./EditableView";
+import { Flex, Text } from "./elements";
+
 export function EditableBox({
   tree,
   depth,
   children,
+  headerText,
   hideHeader = false,
 }: {
-  tree: TreeNode<ElementData>;
+  tree: ElementTree;
   depth: number;
+  headerText?: string;
   children?: any;
   hideHeader?: boolean;
 }) {
@@ -29,7 +31,6 @@ export function EditableBox({
     id: tree.id,
   });
   dragRef(dropRef(ref));
-
   const isBlank = children == null && tree.children.length === 0;
   return (
     <Flex flexDirection="column" border="1px solid #ccc" background="#eee">
@@ -42,11 +43,12 @@ export function EditableBox({
           >
             [i]
           </button>
-          {tree.data.elementType}[{tree.id.slice(-4)}]
+          <Text>
+            {headerText ?? `${tree.data.elementType}[${tree.id.slice(-4)}]`}
+          </Text>
           <button
             style={{
               background: "red",
-              // color: "white",
             }}
             onClick={() => {
               dispatch(deleteNode(tree.id));

@@ -1,5 +1,4 @@
-import { ElementData, ElementSource } from "./types";
-import type { Node as TreeNode } from "./tree-api";
+import { ElementTree, ElementSource } from "./types";
 import uniqueId from "lodash-es/uniqueId";
 
 export const ELEMENT_SOURCES: ElementSource[] = [
@@ -44,7 +43,7 @@ export const ELEMENT_SOURCES: ElementSource[] = [
   },
 ];
 
-export const sampleTree: TreeNode<ElementData> = {
+export const sampleTree: ElementTree = {
   id: "$root",
   data: { elementType: "root" },
   children: [
@@ -159,13 +158,13 @@ export const sampleTree: TreeNode<ElementData> = {
   ],
 };
 
-export const rootTree: TreeNode<ElementData> = {
+export const rootTree: ElementTree = {
   id: "$root",
   data: { elementType: "root" },
   children: [],
 };
 
-export const flexTree: TreeNode<ElementData> = {
+export const flexTree: ElementTree = {
   id: "$root",
   data: { elementType: "root" },
   children: [

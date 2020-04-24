@@ -1,4 +1,4 @@
-export type { Node as TreeNode } from "./tree-api";
+import type { Node as TreeNode } from "./tree-api";
 
 export interface ElementNode {
   elementType: string;
@@ -49,6 +49,8 @@ export type ElementData =
   | TextData
   | ImageData;
 
+export type ElementTree = TreeNode<ElementData>;
+
 export type ElementSource =
   | {
       displayName: string;
@@ -74,15 +76,16 @@ export type ElementSource =
       direction: "row" | "column";
     };
 
-export type DragType =
-  | {
-      dragType: "source";
-      source: ElementSource;
-    }
-  | {
-      dragType: "element";
-      id: string;
-    };
+export type DragType = SourceDragType | ElementDragType;
+export type SourceDragType = {
+  dragType: "source";
+  source: ElementSource;
+};
+
+export type ElementDragType = {
+  dragType: "element";
+  id: string;
+};
 
 export type DropType =
   | {

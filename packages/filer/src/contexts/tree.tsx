@@ -2,7 +2,7 @@ import { useContext, useReducer, Dispatch } from "react";
 import React from "react";
 import { DndProvider } from "react-dnd";
 import Backend from "react-dnd-html5-backend";
-import { ElementData, TreeNode } from "../types";
+import { ElementTree } from "../types";
 import { reducer, TreeState, getInitialState, TreeAction } from "../reducer";
 
 export const TreeStateContext = React.createContext<TreeState>(null as any);
@@ -19,7 +19,7 @@ export function useTreeDispatch() {
 }
 
 export function TreeStateProvider(props: {
-  initialTree: TreeNode<ElementData>;
+  initialTree: ElementTree;
   children: any;
 }) {
   const initialState = getInitialState(props.initialTree);

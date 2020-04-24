@@ -1,15 +1,13 @@
 import React from "react";
 import { Pane, Grid, Flex } from "./elements";
 import { Node as TreeNode } from "../tree-api";
-import { ElementData } from "../types";
+import { ElementData, ElementTree } from "../types";
 import flatten from "lodash-es/flatten";
 import { EditableBox } from "./EditableBox";
 import { BlankPane } from "./BlankPane";
 import { View } from "./View";
-export function EditableView(props: {
-  tree: TreeNode<ElementData>;
-  depth: number;
-}) {
+
+export function EditableView(props: { tree: ElementTree; depth: number }) {
   const data = props.tree.data;
   switch (data.elementType) {
     case "root": {
@@ -71,7 +69,10 @@ export function EditableView(props: {
           <EditableBox hideHeader tree={props.tree} depth={props.depth + 1}>
             <Flex flexDirection={data.direction}>
               {isBlank ? (
-                <BlankPane parentId={props.tree.id} />
+                <BlankPane
+                  parentId={props.tree.id}
+                  text={`Add ${data.direction}`}
+                />
               ) : (
                 <View tree={props.tree} />
               )}
@@ -89,7 +90,10 @@ export function EditableView(props: {
               })}
             </Flex>
             <Flex flex={1}>
-              <BlankPane parentId={props.tree.id} />
+              <BlankPane
+                parentId={props.tree.id}
+                text={`Add ${data.direction}`}
+              />
             </Flex>
           </Flex>
         </EditableBox>

@@ -1,9 +1,8 @@
-import React from "react";
-import { Pane, Grid, Text, Flex } from "./elements";
-import { Node as TreeNode } from "../tree-api";
-import { ElementData } from "../types";
 import flatten from "lodash-es/flatten";
-export function View(props: { tree: TreeNode<ElementData> }) {
+import React from "react";
+import { ElementTree } from "../types";
+import { Flex, Grid, Pane, Text } from "./elements";
+export function View(props: { tree: ElementTree }) {
   const data = props.tree.data;
   switch (data.elementType) {
     case "root": {

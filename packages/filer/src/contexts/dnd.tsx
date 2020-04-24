@@ -1,16 +1,13 @@
-import {
-  useDrag,
-  useDrop,
-  DropTargetMonitor,
-  DragSourceMonitor,
-} from "react-dnd";
+import { useDrag, useDrop, DragSourceMonitor } from "react-dnd";
 import {
   ElementData,
-  TreeNode,
   GridAreaData,
-  GridData,
   DragType,
   DropType,
+  ElementTree,
+  SourceDragType,
+  ElementNode,
+  GridData,
 } from "../types";
 import { useTreeDispatch } from "./tree";
 import { swapNodes, moveNode, addChild } from "../reducer";
@@ -25,12 +22,20 @@ type DragSpec<T> = {
   collect?: (monitor: DragSourceMonitor) => T;
 };
 
-export function useDragOnTree<T = any>(
-  dragType: DragType,
-  spec: DragSpec<T> = {}
-) {
-  return useDrag<DragType & { type: typeof DND_CONTEXT }, void, T>({
-    canDrag: spec.canDrag ?? (() => true),
+type DragState = {
+  isDragging: boolean;
+};
+
+type DropState = {
+  canDrop: boolean;
+  isOver: boolean;
+};
+
+export function useDragOnTree(dragType: DragType) {
+  return useDrag<DragType & { type: typeof DND_CONTEXT }, void, DragState>({
+    canDrag: () => {
+      return true;
+    },
     begin() {
       console.log("begin", dragType);
     },
@@ -38,80 +43,39 @@ export function useDragOnTree<T = any>(
       type: DND_CONTEXT,
       ...dragType,
     },
-    collect: spec.collect,
+    collect(monitor: DragSourceMonitor) {
+      return {
+        isDragging: monitor.isDragging(),
+      };
+    },
   });
 }
 
-export function useDropOnTree<T = any>(
-  drop: DropType,
-  spec: {
-    canDrop?: () => boolean;
-    collect?: (monitor: DropTargetMonitor) => T;
-  } = {}
-) {
+export function useDropOnTree(drop: DropType) {
   const dispatch = useTreeDispatch();
-  return useDrop<DragType & { type: typeof DND_CONTEXT }, any, T>({
+  return useDrop<DragType & { type: typeof DND_CONTEXT }, any, DropState>({
     accept: DND_CONTEXT,
-    canDrop: spec.canDrop || (() => true),
-    collect: spec.collect,
+    canDrop: () => true,
+    collect(monitor) {
+      return {
+        canDrop: monitor.canDrop(),
+        isOver: monitor.isOver(),
+      };
+    },
     drop(drag, _monitor) {
       console.log("drag", drag, ": drop to", drop);
       switch (drag.dragType) {
         case "source": {
           switch (drop.dropType) {
             case "blank": {
-              let childData: ElementData | null = null;
-              let children: TreeNode<ElementData>[] = [];
-              if (drag.source.sourceType == "text") {
-                childData = {
-                  elementType: "text",
-                  value: ulid().slice(-5),
-                };
-              }
-
-              if (drag.source.sourceType == "image") {
-                childData = {
-                  elementType: "image",
-                  src: drag.source.src,
-                };
-              }
-
-              if (drag.source.sourceType == "flex") {
-                childData = {
-                  elementType: "flex",
-                  direction: drag.source.direction,
-                };
-              }
-
-              if (drag.source.sourceType == "grid") {
-                childData = {
-                  elementType: "grid",
-                  rows: drag.source.rows,
-                  columns: drag.source.columns,
-                  areas: drag.source.areas,
-                };
-                // @ts-ignore
-                children = drag.source.areas.flat().map((areaName: string) => {
-                  return {
-                    id: uniqueId(),
-                    data: {
-                      elementType: "grid-area",
-                      gridArea: areaName,
-                    } as GridAreaData,
-                    children: [],
-                  };
-                });
-              }
-
-              if (childData == null) {
-                throw new Error(`Unknown ${drag.source.sourceType}`);
-              }
-
+              const {
+                data: childData,
+                children,
+              } = createElementDataBySourceType(drag);
               dispatch(
                 addChild({ parentId: drop.parentId, data: childData, children })
               );
               return;
-              // TODO: create blank
             }
             default: {
               return;
@@ -139,7 +103,70 @@ export function useDropOnTree<T = any>(
           }
         }
       }
-      return {};
     },
   });
+}
+
+function createElementDataBySourceType(
+  drag: SourceDragType
+): {
+  data: ElementData;
+  children: ElementTree[];
+} {
+  switch (drag.source.sourceType) {
+    case "text": {
+      return {
+        data: {
+          elementType: "text",
+          value: ulid().slice(-5),
+        },
+        children: [],
+      };
+    }
+
+    case "image": {
+      return {
+        data: {
+          elementType: "image",
+          src: drag.source.src,
+        },
+        children: [],
+      };
+    }
+
+    case "flex": {
+      return {
+        data: {
+          elementType: "flex",
+          direction: drag.source.direction,
+        },
+        children: [],
+      };
+    }
+
+    case "grid": {
+      const childData = {
+        elementType: "grid",
+        rows: drag.source.rows,
+        columns: drag.source.columns,
+        areas: drag.source.areas,
+      } as GridData;
+      // @ts-ignore
+      const children = drag.source.areas.flat().map((areaName: string) => {
+        return {
+          id: uniqueId(),
+          data: {
+            elementType: "grid-area",
+            gridArea: areaName,
+          } as GridAreaData,
+          children: [],
+        };
+      });
+      return { data: childData, children };
+    }
+    default: {
+      // @ts-ignore
+      throw new Error(`Unkown sourceType ${drag.source.sourceType}`);
+    }
+  }
 }

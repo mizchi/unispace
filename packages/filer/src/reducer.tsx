@@ -1,6 +1,6 @@
 import { toInvertedTree, InvertedTree } from "./tree-api/inverted";
 import { reducerWithoutInitialState } from "typescript-fsa-reducers";
-import { ElementData, TreeNode, GridAreaData } from "./types";
+import { ElementData, ElementTree, GridAreaData } from "./types";
 import actionCreatorFactory from "typescript-fsa";
 import * as invUtils from "./tree-api/inverted";
 import * as treeUtils from "./tree-api";
@@ -8,28 +8,36 @@ import * as treeUtils from "./tree-api";
 // import { ulid } from "ulid";
 import uniqueId from "lodash-es/uniqueId";
 
-// treeUtils.setNodeWithCursor()
+export enum TreeEditMode {
+  LAYOUT = "layout",
+  ELEMENT = "element",
+}
+
 export type TreeState = {
-  tree: TreeNode<ElementData>;
+  tree: ElementTree;
   inv: InvertedTree<ElementData>;
   selectedId: string | null;
+  editMode: TreeEditMode;
 };
 
-export const getInitialState = (tree: TreeNode<ElementData>) => {
+export const getInitialState = (tree: ElementTree): TreeState => {
   return {
     tree: tree,
     inv: toInvertedTree(tree),
     selectedId: null,
+    editMode: TreeEditMode.ELEMENT,
   };
 };
 
 const actionCreator = actionCreatorFactory();
 
 export const selectNode = actionCreator<string | null>("select-node");
+export const selectEditMode = actionCreator<TreeEditMode>("select-edit-mode");
+
 export const addChild = actionCreator<{
   parentId: string;
   data: ElementData;
-  children?: TreeNode<ElementData>[];
+  children?: ElementTree[];
 }>("add-child");
 
 export const swapNodes = actionCreator<{ aid: string; bid: string }>(
@@ -53,7 +61,7 @@ export type TreeAction =
 
 export const reducer = reducerWithoutInitialState<TreeState>()
   .case(addChild, (state, payload) => {
-    const newNode: TreeNode<ElementData> = {
+    const newNode: ElementTree = {
       id: uniqueId(),
       data: payload.data,
       children: payload.children ?? [],
@@ -94,7 +102,13 @@ export const reducer = reducerWithoutInitialState<TreeState>()
       tree: invUtils.toNode(newInv),
     };
   })
-
+  // UI
+  .case(selectEditMode, (state, payload) => {
+    return {
+      ...state,
+      editMode: payload,
+    };
+  })
   .case(selectNode, (state, payload) => {
     return {
       ...state,
