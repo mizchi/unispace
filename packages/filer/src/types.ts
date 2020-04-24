@@ -96,3 +96,16 @@ export type DropType =
       id: string;
       dropType: "existed-element";
     };
+
+// TODO: Extract as domain data
+export function isLayoutElement(
+  elementType: ElementData["elementType"]
+): boolean {
+  return ["grid", "flex", "grid-area", "root"].includes(elementType);
+}
+
+export function isNodeElement(
+  elementType: ElementData["elementType"]
+): boolean {
+  return !isLayoutElement(elementType);
+}

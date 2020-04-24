@@ -3,10 +3,15 @@ import ReactDOM from "react-dom";
 import { Pane, Flex } from "./components/elements";
 import { ElementSource } from "./types";
 import { sampleTree, rootTree, flexTree, ELEMENT_SOURCES } from "./mock";
-import { useTreeState, TreeStateProvider } from "./contexts/tree";
+import {
+  useTreeState,
+  TreeStateProvider,
+  useTreeDispatch,
+} from "./contexts/tree";
 import { SourceList } from "./components/SourceList";
 import { EditableView } from "./components/EditableView";
 import { View } from "./components/View";
+import { selectEditMode, TreeEditMode } from "./reducer";
 
 function EditableRootTree() {
   const { tree } = useTreeState();
@@ -27,11 +32,71 @@ function OutputTree() {
   );
 }
 
-function App() {
-  const [mode, setMode] = useState<"editable" | "preview" | "output">(
-    "editable"
-  );
+const buttons = [
+  {
+    editMode: TreeEditMode.ELEMENT,
+  },
+  {
+    editMode: TreeEditMode.LAYOUT,
+  },
+  {
+    editMode: TreeEditMode.PREVIEW,
+  },
+  {
+    editMode: TreeEditMode.OUTPUT,
+  },
+];
 
+function EditModeButtonGroup() {
+  const { editMode } = useTreeState();
+  const dispatch = useTreeDispatch();
+
+  return (
+    <Pane>
+      {buttons.map((b) => {
+        return (
+          <button
+            key={b.editMode}
+            disabled={editMode === b.editMode}
+            onClick={() => dispatch(selectEditMode(b.editMode))}
+          >
+            {TreeEditMode[b.editMode]}
+          </button>
+        );
+      })}
+    </Pane>
+  );
+}
+
+function SelectedModeTree() {
+  const { editMode } = useTreeState();
+  switch (editMode) {
+    case TreeEditMode.ELEMENT:
+    case TreeEditMode.LAYOUT: {
+      return (
+        <Flex flex={1}>
+          <EditableRootTree />
+        </Flex>
+      );
+    }
+    case TreeEditMode.PREVIEW: {
+      return (
+        <Flex flex={1}>
+          <PreviewRootTree />
+        </Flex>
+      );
+    }
+    case TreeEditMode.OUTPUT: {
+      return (
+        <Flex flex={1}>
+          <OutputTree />
+        </Flex>
+      );
+    }
+  }
+}
+
+function App() {
   return (
     <>
       <style
@@ -53,40 +118,11 @@ function App() {
               <Pane flex={1} padding={10}>
                 <Flex flexDirection="column">
                   <Flex height={32}>
-                    <button
-                      disabled={mode === "editable"}
-                      onClick={() => setMode("editable")}
-                    >
-                      editable
-                    </button>
-                    <button
-                      disabled={mode === "preview"}
-                      onClick={() => setMode("preview")}
-                    >
-                      preview
-                    </button>
-                    <button
-                      disabled={mode === "output"}
-                      onClick={() => setMode("output")}
-                    >
-                      output
-                    </button>
+                    <EditModeButtonGroup />
                   </Flex>
-                  {mode === "editable" && (
-                    <Flex flex={1}>
-                      <EditableRootTree />
-                    </Flex>
-                  )}
-                  {mode === "preview" && (
-                    <Flex flex={1}>
-                      <PreviewRootTree />
-                    </Flex>
-                  )}
-                  {mode === "output" && (
-                    <Flex flex={1}>
-                      <OutputTree />
-                    </Flex>
-                  )}
+                  <Flex height="calc(100% - 32px)">
+                    <SelectedModeTree />
+                  </Flex>
                 </Flex>
               </Pane>
             </Flex>

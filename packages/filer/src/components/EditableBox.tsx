@@ -12,13 +12,13 @@ export function EditableBox({
   depth,
   children,
   headerText,
-  hideHeader = false,
+  showHeader = true,
 }: {
   tree: ElementTree;
   depth: number;
   headerText?: string;
   children?: any;
-  hideHeader?: boolean;
+  showHeader?: boolean;
 }) {
   const dispatch = useTreeDispatch();
   const ref = useRef<HTMLDivElement>(null);
@@ -34,7 +34,7 @@ export function EditableBox({
   const isBlank = children == null && tree.children.length === 0;
   return (
     <Flex flexDirection="column" border="1px solid #ccc" background="#eee">
-      {!hideHeader && (
+      {showHeader && (
         <Flex ref={ref} height="24px" fontSize={16}>
           <button
             onClick={() => {

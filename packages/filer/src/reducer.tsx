@@ -9,8 +9,10 @@ import * as treeUtils from "./tree-api";
 import uniqueId from "lodash-es/uniqueId";
 
 export enum TreeEditMode {
-  LAYOUT = "layout",
-  ELEMENT = "element",
+  LAYOUT = "LAYOUT",
+  ELEMENT = "ELEMENT",
+  PREVIEW = "PREVIEW",
+  OUTPUT = "OUTPUT",
 }
 
 export type TreeState = {

@@ -85,6 +85,29 @@ export const Grid = forwardRef(
   }
 );
 
+export const GridArea = forwardRef(
+  (props: CSSProperties & { children: any }, ref: any) => {
+    const { children, ...others } = props;
+    return (
+      <div
+        ref={ref}
+        style={{
+          position: "relative",
+          width: "100%",
+          height: "100%",
+          display: "grid",
+        }}
+      >
+        <div
+          style={{ position: "absolute", top: 0, bottom: 0, right: 0, left: 0 }}
+        >
+          <Pane {...others}>{props.children}</Pane>
+        </div>
+      </div>
+    );
+  }
+);
+
 export const Text = forwardRef(
   (
     props: CSSProperties & {
